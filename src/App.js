@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { getData } from "./utils/api";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    loading: true,
+    data: null
+  };
+
+  componentDidMount() {
+    getData().then(data =>
+      this.setState(prevState => ({
+        ...prevState,
+        data: data.data.records,
+        loading: !prevState.loading
+      }))
+    );
+  }
+
+  render() {
+    const { loading, data } = this.state;
+    console.log(data);
+
+    if (loading) {
+      return (
+        <div style={{ textAlign: `center`, margin: `40px` }}>LOADING!!!</div>
+      );
+    }
+
+    return (
+      <div style={{ textAlign: `center`, margin: `40px` }}>
+        {data.map(dataPoint => {
+          const { Name } = dataPoint.fields;
+          return (
+            <div
+              key={dataPoint.id}
+              style={{
+                padding: `10px`,
+                border: `1px solid gray`,
+                marginBottom: `10px`
+              }}
+            >
+              {Name}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 }
 
 export default App;
